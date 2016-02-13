@@ -39,23 +39,26 @@ def every_to_seconds(value)
   end
 end
 
-def get_mirror_lastupdate(mirror)
-  Net::HTTP.get(URI.parse("#{mirror}/lastupdate")).to_i
+def get_mirror_lastupdate(url)
+  Net::HTTP.get(URI.parse(url)).to_i
 end
 
-def check_for_updates(mirror)
-  mirror_lastupdate = get_mirror_lastupdate
+def check_for_updates(last_update_url, mirror)
+  mirror_lastupdate = get_mirror_lastupdate last_update_url
   local_update = File.read("/var/mirror/lastupdate").to_i
   if mirror_update > local_update
+    LOGGER.info "Update found, syncing..."
     do_sync mirror, local_update
+  else
+    LOGGER.info "No update found, sleeping until next check..."
   end
 end
 
 def do_sync(mirror, local_update)
   rsync_log = "/etc/arch-mirror/logs/log-from-#{local_update}.log"
-  rsync_bin = ''
-  rsync_params = ''
-  output = `#{rsync_bin} #{rsync_params}`
+  rsync_bin = '/usr/bin/rsync'
+  rsync_params = '-rtlvH --safe-links --delete-after --timeout=600 --contimeout=60 -p --delay-updates --no-motd --exclude-from="/etc/arch-mirror/excludes.txt"'
+  output = `#{rsync_bin} #{rsync_params} #{mirror} /var/mirror/`
   File.write(rsync_log, output) 
 end
 
@@ -73,7 +76,7 @@ def start_processes(sync)
       skip = false
     else
       LOGGER.info "Checking for updates..."
-      check_for_updates sync['mirror']
+      check_for_updates sync['last_update_url'], sync['mirror']
     end
     sleep sleep_period
   end
