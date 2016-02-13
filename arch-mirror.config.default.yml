@@ -1,0 +1,14 @@
+# Exclusion list
+excludes:
+  iso: false
+  32bits: false
+  64bits: false
+sync:
+  # can be minutes, hours or days
+  every: minutes
+  # skip initial sync
+  skip_first: false
+  # lastupdate url
+  last_update_url: http://fooo.biz/archlinux/lastupdate
+  # mirror (must be a rsync:// tier1 mirror)
+  mirror: rsync://fooo.biz/archlinux/
