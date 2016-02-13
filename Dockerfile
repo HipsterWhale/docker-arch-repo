@@ -8,6 +8,7 @@ RUN apk add --update rsync nginx ruby && rm -rf /var/cache/apk
 COPY ./entrypoint.sh /bin/entrypoint
 COPY ./watchdog.rb /bin/watchdog
 COPY ./arch-mirror.config.default.yml /etc/arch-mirror.config.default.yml
+COPY ./nginx.conf /etc/nginx/nginx.conf
 RUN chmod +x /bin/entrypoint /bin/watchdog
 
 VOLUME ["/etc/arch-mirror", "/var/mirror"]
