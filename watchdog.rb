@@ -57,9 +57,15 @@ end
 def do_sync(mirror, local_update)
   rsync_log = "/etc/arch-mirror/logs/log-from-#{local_update}.log"
   rsync_bin = '/usr/bin/rsync'
-  rsync_params = '-rtlvH --safe-links --delete-after --timeout=600 --contimeout=60 -p --delay-updates --no-motd --exclude-from="/etc/arch-mirror/excludes.txt"'
-  output = `#{rsync_bin} #{rsync_params} #{mirror} /var/mirror/`
-  File.write(rsync_log, output) 
+  rsync_params = '-rtlvH --safe-links --progress --delete-after --timeout=600 --contimeout=60 -p --delay-updates --no-motd --exclude-from="/etc/arch-mirror/excludes.txt"'
+  log_file = '/var/run/mirror.lock'
+  fork do
+    unless File.exist? log_file
+      File.write(log_file, 'working')
+      exec "#{rsync_bin} #{rsync_params} #{mirror} /var/mirror/"
+      File.delete log_file
+    end
+  end
 end
 
 def start_processes(sync)
