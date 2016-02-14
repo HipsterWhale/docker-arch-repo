@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 
 if [ ! -f "/etc/arch-mirror/config.yml" ]; then
   echo "No config file found, copying default one..."
