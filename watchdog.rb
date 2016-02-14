@@ -14,9 +14,9 @@ end
 
 def create_excludes(arch)
   returned = []
-  return << "*/#{arch}"
-  return << "pool/*/*-#{arch}.pkg.tar.xz"
-  return << "pool/*/*-#{arch}.pkg.tar.gz"
+  returned << "*/#{arch}"
+  returned << "pool/*/*-#{arch}.pkg.tar.xz"
+  returned << "pool/*/*-#{arch}.pkg.tar.gz"
   returned
 end
 
