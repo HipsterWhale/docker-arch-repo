@@ -46,7 +46,7 @@ end
 def check_for_updates(last_update_url, mirror)
   mirror_lastupdate = get_mirror_lastupdate last_update_url
   local_update = File.read("/var/mirror/lastupdate").to_i
-  if mirror_update > local_update
+  if mirror_lastupdate > local_update
     LOGGER.info "Update found, syncing..."
     do_sync mirror, local_update
   else
@@ -83,9 +83,9 @@ def start_processes(sync)
 end
 
 def main
-  excludes, sync = create_config
+  excludes, sync = load_config
   create_rsync_excludes excludes
-  start_processes timer
+  start_processes sync
 end
 
 main
